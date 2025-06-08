@@ -39,16 +39,19 @@ const authState = useContext(AuthContext)
       title:'Search',
       tabBarLabel: 'Search',
       headerShown:false,
+      popToTopOnBlur:true,
       tabBarIcon: ({color}) => <MaterialCommunityIcons name="search-web" size={24} color={color} />
     }}></Tabs.Screen>
     <Tabs.Screen  name='third' options={{
       title:'Videos',
       tabBarLabel: 'Watch',
+      popToTopOnBlur:true,
       tabBarIcon: ({color}) => <Entypo name="folder-video" size={24} color={color} />
     }}></Tabs.Screen>
     <Tabs.Screen  name='(profile)' options={{
       title:'Profile',
       tabBarLabel: 'Profile',
+      popToTopOnBlur:true,
       tabBarIcon: ({color}) => <MaterialCommunityIcons name="account" size={24} color={color} />
     }}></Tabs.Screen>
   </Tabs>;

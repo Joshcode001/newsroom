@@ -276,7 +276,7 @@ export const Navbar = ({ router,selectedC,Ref, icon,  isC, isActive, ScrollRef}:
     <TouchableOpacity disabled={isActive}
       style={[{backgroundColor:'#322E07'},styles.nav, {shadowColor: (isC === 'education') ? '#E51807': '#000'}]}
       onPress={()=> {
- 
+
         Ref.current = 'education';
         router.push({
           pathname: '/category',
@@ -478,7 +478,6 @@ export const Navbar = ({ router,selectedC,Ref, icon,  isC, isActive, ScrollRef}:
 
 
 export default function Index() {
- const [num, setnum] = useState(0)
   const Ref = useRef('')
   const ScrollRef = useRef<ScrollView>(null)
   const router = useRouter()
