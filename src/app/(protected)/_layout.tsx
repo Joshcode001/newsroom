@@ -4,7 +4,7 @@ import Entypo from '@expo/vector-icons/Entypo';
 import { AuthContext } from "@/src/utils/authContext";
 import { useContext } from "react";
 import { BlurView } from "expo-blur";
-import { StyleSheet } from "react-native";
+import { StyleSheet} from "react-native";
 
 
 
@@ -35,7 +35,7 @@ const authState = useContext(AuthContext)
       headerShown:false,
       popToTopOnBlur:true
     }}></Tabs.Screen>
-    <Tabs.Screen  name='second' options={{
+    <Tabs.Screen  name='(search)' options={{
       title:'Search',
       tabBarLabel: 'Search',
       headerShown:false,
