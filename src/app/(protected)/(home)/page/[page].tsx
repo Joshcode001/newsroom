@@ -1,45 +1,13 @@
-import { Text, View ,StyleSheet,TouchableOpacity, Modal,FlatList,ActivityIndicator,ScrollView} from "react-native";
+import { Text, View ,StyleSheet,TouchableOpacity, Modal,FlatList,ActivityIndicator} from "react-native";
 import { Stack,useRouter,useLocalSearchParams } from "expo-router";
 import React, {useState, useEffect,useRef, useContext} from "react";
-import { Notifybar,Countrybar, CountryTag, Searchbar, Newsitem, Navbar } from '..'
+import { Notifybar,Countrybar, CountryTag, Searchbar, Newsitem} from '..'
 import { AuthContext } from "@/src/utils/authContext";
-import Animated, {useAnimatedStyle, useSharedValue, withSpring} from 'react-native-reanimated'
+import { useAnimatedRef } from 'react-native-reanimated'
+import CustomNav from "@/src/component/CustomNav";
 
 
 
-
-
-
-type ctag = {
-onPressc : () => void,
-cicon: string,
-cname: string
-}
-
-type ntag = {
-onPressb : () => void
-}
-
-type ctag2 = {
-cname: string,
-icon: string,
-onPressc: () => void
-
-}
-type stag = {
-setSearch: (text: string) => void,
-search: string
-}
-
-type natag = {
-router: any,
-selectedC: string,
-icon: string,
-Ref: any,
-isC?: string,
-isActive: boolean
-
-}
 
 type res = {
 title: string,
@@ -52,18 +20,6 @@ link: string,
 article_id: string
 }
 
-type ttag = {
-date: string
-}
-
-
-
-
-
-
-
-
-
 
 
 
@@ -71,8 +27,9 @@ date: string
 
 
 const fifth = () => {
+
+const animatedRef = useAnimatedRef<FlatList>()
 const authState = useContext(AuthContext)
-const ScrollRef = useRef<FlatList>(null)
 const [isLoading, setisLoading] = useState(false)
 const {country, category, page}= useLocalSearchParams()
 const Ref = useRef('')
@@ -100,18 +57,6 @@ bates = category;
 if (typeof page === 'string') {
 belect = page;
 }
-
-
-
-
-
-const lth = useSharedValue(0)
-
-const anistyle = useAnimatedStyle(()=> {
-return{
-transform:[{translateX:lth.value}]
-}
-}, [])
 
 
 
@@ -174,7 +119,7 @@ headerLeft: () => <Countrybar onPressc={cpick} cicon={selectedC.icon} cname={sel
 animation:'none',
 }}/>
 <View style={styles.navbar}>
-<Navbar  router={router} isActive={isActive} ScrollRef={ScrollRef} anistyle={anistyle} data={authState.category}
+<CustomNav animatedRef={animatedRef} router={router} isActive={isActive}   data={authState.category}
 selectedC={selectedC.name} Ref={Ref} icon={selectedC.icon}/>
 </View>
 <View style={styles.content}>

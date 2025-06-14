@@ -2,10 +2,12 @@ import { View, Text, StyleSheet, FlatList ,Pressable,TouchableOpacity, ActivityI
 import React,{useState, useRef, useEffect, useContext} from 'react'
 import { useLocalSearchParams, Stack,useRouter } from 'expo-router'
 import CountryFlag from 'react-native-country-flag'
-import { Navbar, Newsitem } from '.'
+import { Newsitem, SCREEN_WIDTH } from '.'
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { AuthContext } from '@/src/utils/authContext'
-import Animated, {useAnimatedStyle, useSharedValue, withSpring} from 'react-native-reanimated'
+import CustomNav from '@/src/component/CustomNav'
+import  { useSharedValue, withTiming, useAnimatedRef,scrollTo,useDerivedValue} from 'react-native-reanimated'
+
 
 
 
@@ -14,6 +16,7 @@ type ttag = {
 sname: string ,
 icon: string 
 }
+
 type res = {
 title: string,
 sourcen: string,
@@ -40,8 +43,8 @@ export const CountryTagg = ({sname, icon}: ttag) => (
 
 
 const category = () => {
+const animatedRef = useAnimatedRef<FlatList>()
 const authState = useContext(AuthContext)
-const ScrollRef = useRef<FlatList>(null)
 const [result, setResult] = useState(1)
 const [isLoading, setisLoading] = useState(false)
 const [nextPage, setnextPage] = useState('')
@@ -49,6 +52,8 @@ const [Post, setPost] = useState<res[]>([])
 const ref = useRef(null)
 const router = useRouter()
 const {country,Category,icon} = useLocalSearchParams()
+
+
 let con:string = '';
 let cgory:string = '';
 let econ:string = '';
@@ -64,6 +69,8 @@ cgory = Category;
 if (typeof icon === 'string') {
 econ = icon;
 }
+
+
 
 
 
@@ -97,21 +104,79 @@ console.log(err)
 
 }
 
+
+
+const scroll = useSharedValue(0)
+
+useDerivedValue(() => {
+scrollTo(
+animatedRef,
+scroll.value,
+0,
+true
+);
+});
+
+
+
+
+
+
+
+
 useEffect(() => {
+
 getNNews(econ, cgory);
 
-}, [])
-
-
-
-
-const lth = useSharedValue(0)
-
-const anistyle = useAnimatedStyle(()=> {
-return{
-transform:[{translateX:lth.value}]
+switch(cgory) {
+case 'business':
+scroll.value = withTiming(0)
+break;
+case 'crime':
+scroll.value = withTiming(0)
+break;
+case 'domestic':
+scroll.value = withTiming(0)
+break;
+case 'education':
+scroll.value = withTiming(420)
+break;
+case 'entertainment':
+scroll.value = withTiming(420)
+break;
+case 'environment':
+scroll.value = withTiming(420)
+break;
+case 'food':
+scroll.value = withTiming(840)
+break;
+case 'health':
+scroll.value = withTiming(840)
+break;
+case 'lifestyle':
+scroll.value = withTiming(840)
+break;
+case 'politics':
+scroll.value = withTiming(1260)
+break;
+case 'science':
+scroll.value = withTiming(1260)
+break;
+case 'sports':
+scroll.value = withTiming(1260)
+break;
+case 'technology':
+scroll.value = withTiming(1680)
+break;
+case 'tourism':
+scroll.value = withTiming(1680)
+break;
 }
+
 }, [])
+
+
+
 
 
 
@@ -135,7 +200,6 @@ return (
 
 
 
-
 return (
 <View style={styles.container}>
 <Stack.Screen options={{
@@ -147,7 +211,7 @@ headerLeft: () => <Pressable onPress={()=> router.dismissTo('/')}>
 animation:'none'
 }}/>
 <View style={styles.navbar}>
-<Navbar   router={router} Ref={ref} icon={econ} selectedC={con} anistyle={anistyle}  isC={cgory} isActive={false}  ScrollRef={ScrollRef} data={authState.category}/>
+<CustomNav animatedRef={animatedRef} router={router} Ref={ref} icon={econ} selectedC={con}   isC={cgory} isActive={false}   data={authState.category}/>
 </View>
 
 <View style={styles.content}>
@@ -167,6 +231,7 @@ country:con,
 category: cgory,
 page:nextPage,
 icon:econ,
+slidenum:scroll.value
 }
 
 })
@@ -198,6 +263,7 @@ flex: 1,
 justifyContent: "center",
 alignItems: "center",
 },
+
 countrytag: {
 width:200,
 height:30,
@@ -206,16 +272,18 @@ alignItems:'center',
 flexDirection: 'row',
 columnGap: 10
 },
+
 countryn: {
 color:'azure'
 },
+
 navbar: {
 flex: 0.8,
 backgroundColor:'#dcdcdc',
-width:500,
+width:SCREEN_WIDTH,
 justifyContent: 'center',
 alignItems:'center',
-paddingTop:10,
+
 
 
 },

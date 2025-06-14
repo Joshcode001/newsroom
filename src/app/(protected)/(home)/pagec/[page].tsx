@@ -1,14 +1,13 @@
 import { View, Text, StyleSheet, FlatList ,Pressable,TouchableOpacity,ActivityIndicator} from 'react-native'
 import React,{useState, useRef, useEffect, useContext} from 'react'
 import { useLocalSearchParams, Stack,useRouter } from 'expo-router'
-import { Navbar, Newsitem } from '..'
+import { Newsitem } from '..'
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { CountryTagg } from '../[category]' 
 import { AuthContext } from "@/src/utils/authContext";
-import Animated, {useAnimatedStyle, useSharedValue, withSpring} from 'react-native-reanimated'
-
-
-
+import CustomNav from '@/src/component/CustomNav';
+import  { useSharedValue,withTiming, useAnimatedRef,scrollTo,useDerivedValue} from 'react-native-reanimated'
+import { SCREEN_WIDTH } from '..';
 
 
 
@@ -32,16 +31,14 @@ article_id: string
 
 
 const page = () => {
+const animatedRef = useAnimatedRef<FlatList>()
 const authState = useContext(AuthContext)
-const ScrollRef = useRef<FlatList>(null)
 const [isLoading, setisLoading] = useState(false)
 const [nextPage, setnextPage] = useState('')
 const [Post, setPost] = useState<res[]>([])
 const ref = useRef(null)
 const router = useRouter()
 const {country,category,page,icon} = useLocalSearchParams()
-
-
 
 let con:string = '';
 let cgory:string = '';
@@ -87,26 +84,69 @@ console.log(err)
 
 }
 
+const scroll = useSharedValue(0)
+
+useDerivedValue(() => {
+scrollTo(
+animatedRef,
+scroll.value,
+0,
+true
+);
+});
+
+
+
+
+
+
 useEffect(() => {
 getNNews(econ,cgory,pag);
-}, [])
-
-
-
-
-const lth = useSharedValue(0)
-
-const anistyle = useAnimatedStyle(()=> {
-return{
-transform:[{translateX:lth.value}]
+switch(cgory) {
+case 'business':
+scroll.value = withTiming(0)
+break;
+case 'crime':
+scroll.value = withTiming(0)
+break;
+case 'domestic':
+scroll.value = withTiming(0)
+break;
+case 'education':
+scroll.value = withTiming(420)
+break;
+case 'entertainment':
+scroll.value = withTiming(420)
+break;
+case 'environment':
+scroll.value = withTiming(420)
+break;
+case 'food':
+scroll.value = withTiming(840)
+break;
+case 'health':
+scroll.value = withTiming(840)
+break;
+case 'lifestyle':
+scroll.value = withTiming(840)
+break;
+case 'politics':
+scroll.value = withTiming(1260)
+break;
+case 'science':
+scroll.value = withTiming(1260)
+break;
+case 'sports':
+scroll.value = withTiming(1260)
+break;
+case 'technology':
+scroll.value = withTiming(1680)
+break;
+case 'tourism':
+scroll.value = withTiming(1680)
+break;
 }
 }, [])
-
-
-
-
-
-
 
 
 
@@ -127,7 +167,7 @@ animation:'none',
 
 }}/>
 <View style={styles.navbar}>
-<Navbar  ScrollRef={ScrollRef} router={router} anistyle={anistyle} Ref={ref} icon={econ} selectedC={con}  isC={cgory} isActive={false} data={authState.category}/>
+<CustomNav animatedRef={animatedRef}   router={router}  Ref={ref} icon={econ} selectedC={con}  isC={cgory} isActive={false} data={authState.category}/>
 </View>
 
 <View style={styles.content}>
@@ -191,12 +231,9 @@ color:'azure'
 navbar: {
 flex: 0.8,
 backgroundColor:'#dcdcdc',
-width:500,
+width:SCREEN_WIDTH,
 justifyContent: 'center',
 alignItems:'center',
-paddingTop:10,
-
-
 },
 
 content: {

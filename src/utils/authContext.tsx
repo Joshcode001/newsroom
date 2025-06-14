@@ -199,7 +199,7 @@ const data:dat[] = [
 
 const getData = async () => {
 try {
-const data = await fetch('https://56ca-102-91-77-68.ngrok-free.app/data/initdata')
+const data = await fetch('https://b248-102-91-71-230.ngrok-free.app/data/initdata')
 const json = await data.json()
 setlist(json)
 } catch (err) {

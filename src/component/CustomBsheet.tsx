@@ -1,5 +1,5 @@
 import {View, Text, StyleSheet, Dimensions } from 'react-native'
-import React, {useEffect, useCallback, useImperativeHandle, useState} from 'react'
+import React, {useEffect, useCallback, useImperativeHandle} from 'react'
 import { GestureDetector, Gesture} from 'react-native-gesture-handler';
 import Animated,{useAnimatedStyle, useSharedValue, withSpring, withTiming} from 'react-native-reanimated'
 import Feather from '@expo/vector-icons/Feather';

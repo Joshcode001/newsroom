@@ -43,6 +43,10 @@ const styles = StyleSheet.create({
   },
   box:{
     backgroundColor:'teal',
-    color:'azure'
+    color:'azure',
+    width: 170,
+    height: 80,
+  justifyContent: 'center',
+  alignItems:'center'
   }
 })

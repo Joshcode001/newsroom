@@ -1,21 +1,19 @@
-import { Text, View ,StyleSheet,Pressable,TouchableOpacity, Modal,FlatList,TextInput,ActivityIndicator} from "react-native";
+import { Text, View ,StyleSheet,Pressable,TouchableOpacity, Modal,FlatList,TextInput,ActivityIndicator,Dimensions} from "react-native";
 import { Stack,useRouter,  } from "expo-router";
-import React, {useState, useEffect,useRef, RefObject, useContext, use} from "react";
+import React, {useState, useEffect,useRef,  useContext} from "react";
 import Octicons from '@expo/vector-icons/Octicons';
 import CountryFlag from "react-native-country-flag";
 import {Image} from 'expo-image' ;
 import { formatRFC7231} from "date-fns"
 import { AuthContext } from "@/src/utils/authContext";
-import Animated, {useAnimatedStyle, useSharedValue, withTiming} from 'react-native-reanimated'
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import  { useAnimatedRef} from 'react-native-reanimated'
+import CustomNav from "@/src/component/CustomNav";
 
 
+export const SCREEN_WIDTH = Dimensions.get('window').width
 
 
-
-type item = {
-item: string,
-color: string
-}
 
 type ctag = {
 onPressc : () => void,
@@ -36,31 +34,6 @@ onPressc: () => void
 type stag = {
 setSearch: (text: string) => void,
 search: string
-}
-
-type natag = {
-router: any,
-selectedC: string,
-icon: string,
-Ref: any,
-isC?: string,
-isActive: boolean,
-ScrollRef: RefObject<FlatList | null>,
-data: item[],
-anistyle: any
-}
-
-
-type cat = {
-router: any,
-selectedC: string,
-icon: string,
-Ref: any,
-isC?: string,
-isActive: boolean,
-category: string,
-color: string,
-anistyle: any
 }
 
 
@@ -86,10 +59,6 @@ date: string
 
 
 
-
-
-
-
 export const TimeAgo = ({date}: ttag) => {
 const newdate = formatRFC7231(date)
 return (
@@ -98,10 +67,6 @@ return (
 </View>
 )
 }
-
-
-
-
 
 
 
@@ -178,66 +143,14 @@ export const Newsitem = ({title, sourcen, source_icon, pubDate, image_url, descr
 
 
 
-
-
-
-
-
-
-
-
-const Catitem = ({Ref,isActive, isC,router,selectedC,icon, category, color, anistyle}:cat) => (
-<Animated.View style={anistyle}>
-<TouchableOpacity  ref={Ref} disabled={isActive}
-style={[{backgroundColor:color},styles.nav,{shadowColor: (isC === category) ? '#E51807': '#000'}]} 
-onPress={()=>{
-
-Ref.current = category
-router.push({
-pathname: '/[category]',
-params:{
-country:selectedC,
-Category:Ref.current,
-icon:icon,
-}
-})
-}}>
-<Text style={styles.text}>{category}</Text></TouchableOpacity>
-</Animated.View>
-)
-
-
-
-
-
-
-
-
-export const Navbar = ({ router,selectedC,Ref, icon,  isC, isActive, ScrollRef, data, anistyle}: natag) => (
-<View>
-<FlatList data={data} ref={ScrollRef} renderItem={({item}) => <Catitem anistyle={anistyle} router={router} selectedC={selectedC} Ref={Ref} icon={icon} isC={isC} isActive={isActive} category={item.item} color={item.color}/>} showsHorizontalScrollIndicator={false} horizontal={true}  />
-</View>
-
-)
-
-
-
-
 export default function Index() {
 
-const lth = useSharedValue(0)
-
-const anistyle = useAnimatedStyle(()=> {
-return{
-transform:[{translateX:lth.value}]
-}
-}, [])
 
 
 
+const animatedRef = useAnimatedRef<FlatList>()
 const authState = useContext(AuthContext)
 const Ref = useRef('')
-const ScrollRef = useRef<FlatList>(null)
 const router = useRouter()
 const [Post, setPost] = useState<res[]>([])
 const [isActive, setisActive] = useState(true)
@@ -273,10 +186,6 @@ const newData = data.filter((item) => ((item.name).toLowerCase().includes(Search
 
 
 
-
-
-
-
 const getNews = async () => {
 try {
 setisLoading(true)
@@ -301,8 +210,6 @@ console.log(err)
 
 useEffect(() => {
 getNews();
-lth.value = withTiming(-1590, {duration:4000})
-
 }, [])
 
 
@@ -311,6 +218,7 @@ lth.value = withTiming(-1590, {duration:4000})
 
 
 return (
+<GestureHandlerRootView style={{flex: 1}}>
 <View style={styles.container}>
 <Stack.Screen options={{
 title: '',
@@ -318,12 +226,12 @@ headerRight: ()=> <Notifybar  onPressb={notifymod}/>,
 headerLeft: () => <Countrybar onPressc={cpick} cicon={selectedC.icon} cname={selectedC.name}/>
 }}/>
 <View style={styles.navbar}>
-<Navbar   router={router} isActive={isActive} data={authState.category} anistyle={anistyle}
-selectedC={selectedC.name} Ref={Ref} ScrollRef={ScrollRef}   icon={selectedC.icon}/>
+<CustomNav animatedRef={animatedRef} router={router} isActive={isActive} data={authState.category} 
+selectedC={selectedC.name} Ref={Ref}    icon={selectedC.icon}/>
 </View>
 <View style={styles.content}>
 {isLoading ? (<ActivityIndicator animating={true} color='#15389A' size={40}/>) : 
-<FlatList data={Post} renderItem={
+<FlatList  data={Post} renderItem={
 ({item}) => <Newsitem title={item.title} sourcen={item.sourcen}
 source_icon={item.source_icon}
 link={item.link} image_url={item.image_url} description={item.description} 
@@ -383,6 +291,7 @@ onRequestClose={()=> {setIsModal('a')}} presentationStyle="pageSheet">
 </View>
 </Modal>
 </View>
+</GestureHandlerRootView>
 );
 }
 
@@ -483,11 +392,10 @@ fontSize:20
 navbar: {
 flex: 0.8,
 backgroundColor:'#dcdcdc',
-width:500,
+width:SCREEN_WIDTH,
 justifyContent: 'center',
 alignItems:'center',
-paddingTop:10,
-
+alignContent:'center',
 },
 
 content: {
@@ -509,24 +417,6 @@ alignItems:'center',
 
 },
 
-nav: {
-
-width:100,
-justifyContent:'center',
-alignItems: 'center',
-marginRight:40,
-marginLeft: 40,
-borderRadius: 50,
-height:50,
-shadowColor: '#000',
-shadowOffset: {
-width: 8,
-height: 6,
-},
-shadowOpacity: 0.50,
-shadowRadius: 4,
-elevation: 10,
-},
 
 image: {
 width: 700,
