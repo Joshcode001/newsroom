@@ -9,6 +9,7 @@ import { AuthContext } from "@/src/utils/authContext";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import  { useAnimatedRef} from 'react-native-reanimated'
 import CustomNav from "@/src/component/CustomNav";
+import { colors } from "@/src/utils/authContext";
 
 
 export const SCREEN_WIDTH = Dimensions.get('window').width
@@ -28,28 +29,30 @@ onPressb : () => void
 type ctag2 = {
 cname: string,
 icon: string,
-onPressc: () => void
+onPressc: () => void,
+theme: string
 
 }
 type stag = {
 setSearch: (text: string) => void,
-search: string
+search: string,
+theme: string
 }
 
 
 type res = {
 title: string,
-sourcen: string,
 source_icon: string,
 pubDate: string,
 image_url: string,
 description: string,
-link: string,
-article_id: string
+article_id: string,
+theme: string
 }
 
 type ttag = {
-date: string
+date: string,
+theme: string
 }
 
 
@@ -59,11 +62,11 @@ date: string
 
 
 
-export const TimeAgo = ({date}: ttag) => {
+export const TimeAgo = ({date, theme}: ttag) => {
 const newdate = formatRFC7231(date)
 return (
 <View>
-<Text style={styles.colorb}>{newdate}</Text>
+<Text style={[styles.colorb,{color:theme === 'dark' ? 'azure': '#353535'}]}>{newdate}</Text>
 </View>
 )
 }
@@ -98,10 +101,10 @@ export const Countrybar = ({onPressc, cname, cicon}: ctag) => (
 
 
 
-export const CountryTag = ({cname, icon,onPressc}: ctag2) => (
+export const CountryTag = ({cname, icon,onPressc, theme}: ctag2) => (
 <TouchableOpacity style={styles.ctag} onPress={onPressc}>
 <CountryFlag isoCode={icon} size={20} />
-<Text style={styles.cntag}>{cname}</Text>
+<Text style={[styles.cntag, {color:theme === 'dark' ? 'grey':'#D2E2D7'}]}>{cname}</Text>
 </TouchableOpacity>
 )
 
@@ -109,9 +112,10 @@ export const CountryTag = ({cname, icon,onPressc}: ctag2) => (
 
 
 
-export const Searchbar = ({setSearch, search}: stag) => (
-<View style={styles.sbox}>
-<TextInput placeholder="search by name" onChangeText={text => setSearch(text)} value={search} style={styles.input} />
+export const Searchbar = ({setSearch, search, theme}: stag) => (
+<View style={[styles.sbox, {backgroundColor: theme === 'dark' ? '#130b26' : '#2a223d'}]}>
+<TextInput placeholder="search by name" onChangeText={text => setSearch(text)} value={search}
+style={[styles.input, {backgroundColor: theme === 'dark' ? '#130b26' : '#2a223d'}]} />
 </View>
 )
 
@@ -120,20 +124,19 @@ export const Searchbar = ({setSearch, search}: stag) => (
 
 
 
-export const Newsitem = ({title, sourcen, source_icon, pubDate, image_url, description, link}:res) => (
+export const Newsitem = ({title, source_icon, pubDate, image_url, description, theme}:res) => (
 <View>
 <View style={styles.tbox}>
-<Text style={styles.title}>{title}</Text>
+<Text style={[styles.title, {color:theme === 'dark' ? 'azure' :'#1C2910' }]}>{title}</Text>
 </View>
 <Image source={image_url} style={styles.image} />
-<View style={styles.descbox}>
-<Text style={styles.desc}>{description}</Text>
+<View style={[styles.descbox,{backgroundColor:theme === 'dark' ? '#1b1c1c' :'#dedcdc'}]}>
+<Text style={[styles.desc, {color:theme === 'dark' ? 'azure' :'#1C2910' }]}>{description}</Text>
 </View>
 <View style={styles.linkcon}>
-<View style={styles.linkbox}>
+<View style={[styles.linkbox,{backgroundColor:theme === 'dark' ? '#1b1c1c' :'#dedcdc'}]}>
 <Image source={source_icon} style={styles.image2} contentFit="contain"/>
-<TimeAgo date={pubDate}/>
-<Text>{sourcen}</Text>
+<TimeAgo date={pubDate} theme ={theme}/>
 </View>
 </View>
 </View>
@@ -147,7 +150,7 @@ export default function Index() {
 
 
 
-
+const Acolor = colors
 const animatedRef = useAnimatedRef<FlatList>()
 const authState = useContext(AuthContext)
 const Ref = useRef('')
@@ -177,6 +180,7 @@ setIsModal('a')
 }
 
 const data = authState.data
+const theme = authState.theme
 
 const newData = data.filter((item) => ((item.name).toLowerCase().includes(Search.toLowerCase())))
 
@@ -225,19 +229,19 @@ title: '',
 headerRight: ()=> <Notifybar  onPressb={notifymod}/>,
 headerLeft: () => <Countrybar onPressc={cpick} cicon={selectedC.icon} cname={selectedC.name}/>
 }}/>
-<View style={styles.navbar}>
+<View style={[styles.navbar,{backgroundColor:theme === 'dark' ? '#636262' :'#dedcdc'}]}>
 <CustomNav animatedRef={animatedRef} router={router} isActive={isActive} data={authState.category} 
 selectedC={selectedC.name} Ref={Ref}    icon={selectedC.icon}/>
 </View>
-<View style={styles.content}>
+<View style={[styles.content, {backgroundColor:theme === 'dark' ? '#1b1c1c' :'#dedcdc'}]}>
 {isLoading ? (<ActivityIndicator animating={true} color='#15389A' size={40}/>) : 
 <FlatList  data={Post} renderItem={
-({item}) => <Newsitem title={item.title} sourcen={item.sourcen}
+({item}) => <Newsitem title={item.title}  theme={theme}
 source_icon={item.source_icon}
-link={item.link} image_url={item.image_url} description={item.description} 
+image_url={item.image_url} description={item.description} 
 pubDate={item.pubDate} article_id={item.article_id}/>
 } keyExtractor={item => item.article_id}
-ListFooterComponent={()=> <View style={styles.foot}>
+ListFooterComponent={()=> <View style={[styles.foot,{backgroundColor:theme === 'dark' ? '#383838' :'white'}]}>
 <TouchableOpacity disabled={nextPage === null}
 onPress={() => {
 router.push({
@@ -251,8 +255,7 @@ page:nextPage,
 
 })
 }}>
-<Text>Load More...</Text>
-
+<Text style={{color: theme === 'dark' ?'azure':'#1b1c1c' }}>Load More...</Text>
 </TouchableOpacity>
 </View> }/>
 }
@@ -263,11 +266,12 @@ page:nextPage,
 
 <Modal visible={IsModal === 'b'} animationType="slide"
 onRequestClose={()=> {setIsModal('a')}} presentationStyle="pageSheet">
-<View style={styles.centeredView}>
-<Searchbar  search={Search} setSearch={setSearch}/>
-<View style={[styles.modalView, styles.color]}>
+<View style={[styles.centeredView,{backgroundColor:theme === 'dark' ? '#2e2e2d' :'#cccccc'}]}>
+<Searchbar  search={Search} setSearch={setSearch} theme={theme}/>
+<View style={[styles.modalView, {backgroundColor:theme === 'dark' ? Acolor.dark.tertiary :  Acolor.light.tertiary}]}>
 <FlatList  data={newData} renderItem={({item}) => 
-<CountryTag cname={item.name} icon={item.icon} onPressc={
+<CountryTag theme={theme} cname={item.name} icon={item.icon}
+onPressc={
 () => {
 setSelectedC({
 name: item.name,
@@ -284,8 +288,8 @@ setisActive(false)
 
 <Modal visible={IsModal === 'c'} animationType="slide"
 onRequestClose={()=> {setIsModal('a')}} presentationStyle="pageSheet">
-<View style={styles.centeredView}>
-<View style={styles.modalView}>
+<View style={[styles.centeredView,{backgroundColor:theme === 'dark' ? '#2e2e2d' :'#cccccc'}]}>
+<View style={[styles.modalView, {backgroundColor:theme === 'dark' ? Acolor.dark.tertiary :  Acolor.light.tertiary}]}>
 <Text>Hi there!</Text>
 </View>
 </View>
@@ -324,14 +328,11 @@ centeredView: {
 flex: 1,
 justifyContent: 'center',
 alignItems: 'center',
-
-
 },
 
 modalView: {
 width:380,
 height:700,
-backgroundColor: 'white',
 borderRadius: 30,
 alignItems: 'center',
 shadowColor: '#000',
@@ -363,16 +364,10 @@ alignItems:'center',
 },
 cntag: {
 fontSize:16,
-color:'#D2E2D7'
 },
 
-
-color: {
-backgroundColor: '#425347'
-},
 
 sbox: {
-backgroundColor:'#142F22',
 marginBottom: 40,
 width: 300,
 height: 50,
@@ -382,7 +377,6 @@ alignItems: 'center'
 },
 
 input: {
-backgroundColor:'#142F22',
 width:200,
 height: 50,
 color:'azure',
@@ -391,7 +385,6 @@ fontSize:20
 
 navbar: {
 flex: 0.8,
-backgroundColor:'#dcdcdc',
 width:SCREEN_WIDTH,
 justifyContent: 'center',
 alignItems:'center',
@@ -400,7 +393,6 @@ alignContent:'center',
 
 content: {
 flex: 9.2,
-backgroundColor:'#EDEDED',
 width:700,
 maxHeight:2000,
 justifyContent: 'center',
@@ -409,7 +401,6 @@ alignContent:'center'
 
 },
 foot: {
-backgroundColor:'white',
 width:700,
 height:50,
 justifyContent: 'center',
@@ -435,7 +426,6 @@ textAlign:'center',
 fontSize: 30,
 width:450,
 fontWeight:'900',
-color:'#1C2910',
 padding:30
 },
 
@@ -443,7 +433,6 @@ linkbox: {
 justifyContent:'space-evenly',
 alignItems:'center',
 width:450,
-backgroundColor:'#EAEAEA',
 flexDirection:'row',
 paddingBottom:70,
 paddingTop:70
@@ -453,8 +442,9 @@ descbox: {
 justifyContent:'center',
 alignItems: 'center',
 width:700,
-backgroundColor:'#EAEAEA'
+
 },
+
 tbox:{
 width:700,
 justifyContent:'center',
@@ -477,10 +467,13 @@ width: 700,
 justifyContent:'center',
 alignItems:'center'
 },
+
+
 colorb:{
-color: '#353535',
 fontSize:16
 },
+
+
 auto: {
 width:200,
 height: 40,

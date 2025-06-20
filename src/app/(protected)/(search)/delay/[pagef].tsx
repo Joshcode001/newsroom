@@ -1,9 +1,10 @@
 import { View, Text, StyleSheet, Pressable, ActivityIndicator, TouchableOpacity, FlatList } from 'react-native'
-import React, { useEffect, useState} from 'react'
+import React, { useEffect, useState, useContext} from 'react'
 import { useLocalSearchParams , useRouter} from 'expo-router'
 import { Image } from 'expo-image'
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { Newsitem } from '../../(home)';
+import { AuthContext } from '@/src/utils/authContext';
 
 
 
@@ -32,6 +33,7 @@ const {name, category, image, pagef} = useLocalSearchParams()
 const [isLoading, setIsLoading] = useState(false)
 const [nextPage, setnextPage] = useState('')
 const [result, setresult] = useState<res[]>([])
+const {theme} = useContext(AuthContext)
 
 
 
@@ -162,7 +164,7 @@ getCdata(names, page)
 
 return (
 <View style={styles.container}>
-<View style={styles.head}>
+<View style={[styles.head, {backgroundColor:theme === 'dark' ? '#021526':'#20394f' }]}>
 <Pressable onPress={()=> router.dismissTo('/second')}>
 <View style={styles.backbox}><AntDesign name="left" size={22} color="azure" /></View>
 </Pressable>
@@ -170,15 +172,15 @@ return (
 <Image  source={img} style={{width:80, height:80, borderRadius: '50%'}} contentFit='cover'/>
 </View>
 </View>
-<View style={styles.content}>
+<View style={[styles.content, {backgroundColor:theme === 'dark' ? '#1b1c1c' :'#dedcdc'}]}>
 {(isLoading) ? (<ActivityIndicator />) : 
 <FlatList data={result}  renderItem={({item}) => (
-<Newsitem title={item.title} sourcen={item.sourcen}
+<Newsitem title={item.title} theme={theme}
 source_icon={item.source_icon}
-link={item.link} image_url={item.image_url} description={item.description} 
+ image_url={item.image_url} description={item.description} 
 pubDate={item.pubDate} article_id={item.article_id}/>)} keyExtractor={item => item.article_id}
 ListFooterComponent={()=> (
-<View style={styles.foot}>
+<View style={[styles.foot,{backgroundColor:theme === 'dark' ? '#383838' :'white'}]}>
 <TouchableOpacity disabled={nextPage === null} onPress={()=> {
 router.push({
 pathname: '/(protected)/(search)/delay/[pagef]',
@@ -191,7 +193,7 @@ image: img
 
 })
 }}>
-<Text>Load More...</Text>
+<Text style={{color: theme === 'dark' ?'azure':'#1b1c1c' }}>Load More...</Text>
 </TouchableOpacity>
 </View>)}
 />}
@@ -236,12 +238,10 @@ flexDirection:'row',
 flex:1.7,
 justifyContent: "space-between",
 alignItems: "flex-end",
-backgroundColor:'rgba(0, 0, 0, 0.8)',
 width:'100%'
 },
 
 content: {
-backgroundColor:'#EDEDED',
 flex:8.3,
 justifyContent: "center",
 alignItems: "center",
@@ -267,7 +267,6 @@ marginLeft: 15
 },
 
 foot: {
-backgroundColor:'white',
 width:700,
 height:50,
 justifyContent: 'center',

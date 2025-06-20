@@ -54,6 +54,7 @@ const [search, setsearch] = useState('')
 const {paged,props} = useLocalSearchParams()
 const Ref = useRef<any>(null)
 const title = `Today's Global Searches`
+const theme = authstate.theme
 
 
 let prop = ''
@@ -138,19 +139,19 @@ getNdata(prop, page)
 return (
 <GestureHandlerRootView>
 <View style={styles.container}>
-<View style={styles.head}>
-<SearchBar search={search} setsearch={setsearch} getSdata={getSdata} setisLoading={setisLoading} />
+<View style={[styles.head, {backgroundColor:theme === 'dark' ? '#021526':'#20394f' }]}>
+<SearchBar search={search} setsearch={setsearch} getSdata={getSdata} setisLoading={setisLoading} theme={theme} />
 </View>
-<View style={styles.content}>
+<View style={[styles.content, {backgroundColor:theme === 'dark' ? '#1b1c1c' :'#dedcdc'}]}>
 { isLoading ?  (<ActivityIndicator />) :
 (result.length === 0) ? (<Text>{search} is not Trending at this Hour, Check Later</Text>) :
 <FlatList data={result}  renderItem={({item}) => (
-<Newsitem title={item.title} sourcen={item.sourcen}
+<Newsitem title={item.title} theme={theme}
 source_icon={item.source_icon}
-link={item.link} image_url={item.image_url} description={item.description} 
+image_url={item.image_url} description={item.description} 
 pubDate={item.pubDate} article_id={item.article_id}/>)} keyExtractor={item => item.article_id}
 ListFooterComponent={()=> (
-<View style={styles.foot}>
+<View style={[styles.foot,{backgroundColor:theme === 'dark' ? '#383838' :'white'}]}>
 <TouchableOpacity disabled={nextPage === null} onPress={()=> {
 router.push({
 pathname: '/(protected)/(search)/[paged]',
@@ -160,7 +161,7 @@ paged:nextPage
 }
 })
 }}>
-<Text>Load More...</Text>
+<Text style={{color: theme === 'dark' ?'azure':'#1b1c1c' }}>Load More...</Text>
 </TouchableOpacity>
 </View>)}
 />}
@@ -171,10 +172,10 @@ paged:nextPage
 <CustomBsheet  Ref={Ref} title={title} >
 <View style={styles.child}>
 <ScrollView contentContainerStyle={{flexDirection: 'column', width:'100%', height:2000}} showsVerticalScrollIndicator={false}>
-<Stab data={authstate.listp} router={router} title='Popular People!' />
-<Stab data={authstate.lists} router={router} title='Popular Sources!' />
-<Stab data={authstate.listc} router={router} title='Popular CryptoCoins!' />
-<Stab data={authstate.listt} router={router} title='Popular Teams!' />
+<Stab theme={theme} data={authstate.listp} router={router} title='Popular People!' />
+<Stab theme={theme} data={authstate.lists} router={router} title='Popular Sources!' />
+<Stab theme={theme} data={authstate.listc} router={router} title='Popular CryptoCoins!' />
+<Stab theme={theme} data={authstate.listt} router={router} title='Popular Teams!' />
 </ScrollView>
 </View>
 </CustomBsheet>
@@ -208,12 +209,10 @@ head: {
 flex:1.7,
 justifyContent: "center",
 alignItems: "center",
-backgroundColor:'#222831',
 width:'100%'
 },
 
 content: {
-backgroundColor:'#EDEDED',
 flex:8.3,
 justifyContent: "center",
 alignItems: "center",
@@ -223,7 +222,6 @@ alignContent:'center'
 },
 
 foot: {
-backgroundColor:'white',
 width:700,
 height:50,
 justifyContent: 'center',

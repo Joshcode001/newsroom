@@ -1,8 +1,9 @@
 import {View, Text, StyleSheet, Dimensions } from 'react-native'
-import React, {useEffect, useCallback, useImperativeHandle} from 'react'
+import React, {useEffect, useCallback, useImperativeHandle,useContext} from 'react'
 import { GestureDetector, Gesture} from 'react-native-gesture-handler';
 import Animated,{useAnimatedStyle, useSharedValue, withSpring, withTiming} from 'react-native-reanimated'
 import Feather from '@expo/vector-icons/Feather';
+import { AuthContext } from '../utils/authContext';
 
 
 
@@ -17,7 +18,7 @@ title: string
 
 
 
-const {height: SCREEN_HEIGHT} = Dimensions.get('window')
+export const {height: SCREEN_HEIGHT} = Dimensions.get('window')
 
 
 
@@ -29,6 +30,7 @@ const translateY = useSharedValue(0)
 const context = useSharedValue({y: 0})
 const rotY = useSharedValue(0)
 const active = useSharedValue(false)
+const {theme} = useContext(AuthContext)
 
 
 
@@ -134,8 +136,8 @@ return (
 
 </Animated.View>
 <GestureDetector gesture={gesture}>
-<Animated.View style={[styles.bscontainer, anistyle]} ref={Ref}>
-<View style={styles.thead}>
+<Animated.View style={[styles.bscontainer, anistyle, {backgroundColor:theme === 'dark' ?'#5e5e5e':'#EAE8E8'}]} ref={Ref}>
+<View style={[styles.thead, {backgroundColor:theme === 'dark' ? '#20394f': '#1c568c'}]}>
 <Text style={styles.ttext}>{title}</Text>
 <Animated.View style={iconstyle}>
 <Feather name="chevrons-up" size={15} color="azure" />
@@ -162,7 +164,6 @@ return (
 const styles = StyleSheet.create({
 bscontainer: {
 flex:1,
-backgroundColor: '#EAE8E8',
 borderRadius:15,
 width:'100%',
 height:SCREEN_HEIGHT,
@@ -172,12 +173,11 @@ justifyContent:'flex-start',
 alignItems:'center'
 },
 thead: {
-borderRadius:15,
+borderRadius:8,
 flexDirection:'row',
 columnGap:10,
 height:50,
 width:'100%',
-backgroundColor:'#dbb5b2',
 justifyContent:'center',
 alignItems:'center',
 marginTop:2,

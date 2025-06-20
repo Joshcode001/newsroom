@@ -13,46 +13,47 @@ export default function RootLayout() {
 const authState = useContext(AuthContext)
 
 
-    if (!authState.isLoggedIn) {
-        return <Redirect href='/login'/>
-    }
+if (!authState.isLoggedIn) {
+return <Redirect href='/login'/>
+}
 
 
 
 
-  return <Tabs screenOptions={{
-    tabBarActiveTintColor:'#40514E',
-    tabBarInactiveTintColor: '#C5C5C5',
-    tabBarStyle:{position: 'absolute'},
-    tabBarBackground:() => (
-      <BlurView  tint="dark" intensity={60} style={StyleSheet.absoluteFill}/>
-    )
-  }}>
-    <Tabs.Screen name='(home)' options={{
-      title:'Home',
-      tabBarLabel:'Home',
-      tabBarIcon: ({color}) => <MaterialCommunityIcons name="home" size={24} color={color} />,
-      headerShown:false,
-      popToTopOnBlur:true
-    }}></Tabs.Screen>
-    <Tabs.Screen  name='(search)' options={{
-      title:'Search',
-      tabBarLabel: 'Search',
-      headerShown:false,
-      popToTopOnBlur:true,
-      tabBarIcon: ({color}) => <MaterialCommunityIcons name="search-web" size={24} color={color} />
-    }}></Tabs.Screen>
-    <Tabs.Screen  name='third' options={{
-      title:'Videos',
-      tabBarLabel: 'Watch',
-      popToTopOnBlur:true,
-      tabBarIcon: ({color}) => <Entypo name="folder-video" size={24} color={color} />
-    }}></Tabs.Screen>
-    <Tabs.Screen  name='(profile)' options={{
-      title:'Profile',
-      tabBarLabel: 'Profile',
-      popToTopOnBlur:true,
-      tabBarIcon: ({color}) => <MaterialCommunityIcons name="account" size={24} color={color} />
-    }}></Tabs.Screen>
-  </Tabs>;
+return <Tabs screenOptions={{
+tabBarActiveTintColor:'#40514E',
+tabBarInactiveTintColor: '#C5C5C5',
+tabBarStyle:{position: 'absolute'},
+tabBarBackground:() => (
+<BlurView  tint="dark" intensity={60} style={StyleSheet.absoluteFill}/>
+)
+}}>
+<Tabs.Screen name='(home)' options={{
+title:'Home',
+tabBarLabel:'Home',
+tabBarIcon: ({color}) => <MaterialCommunityIcons name="home" size={24} color={color} />,
+headerShown:false,
+popToTopOnBlur:true
+}}></Tabs.Screen>
+<Tabs.Screen  name='(search)' options={{
+title:'Search',
+tabBarLabel: 'Search',
+headerShown:false,
+popToTopOnBlur:true,
+tabBarIcon: ({color}) => <MaterialCommunityIcons name="search-web" size={24} color={color} />
+}}></Tabs.Screen>
+<Tabs.Screen  name='watch' options={{
+headerShown:false,
+tabBarLabel: 'Watch',
+popToTopOnBlur:true,
+tabBarIcon: ({color}) => <Entypo name="folder-video" size={24} color={color} />
+}}></Tabs.Screen>
+<Tabs.Screen  name='(profile)' options={{
+title:'Profile',
+tabBarLabel: 'Profile',
+headerShown:false,
+popToTopOnBlur:true,
+tabBarIcon: ({color}) => <MaterialCommunityIcons name="account" size={24} color={color} />
+}}></Tabs.Screen>
+</Tabs>;
 }

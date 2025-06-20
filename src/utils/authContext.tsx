@@ -1,5 +1,7 @@
 import React,{createContext,useState, PropsWithChildren, useEffect} from "react";
 import { useRouter } from "expo-router";
+import { useColorScheme } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type props  = {
 _id: string,
@@ -29,7 +31,33 @@ lists: props[],
 listc: props[],
 listt: props[],
 category: item[],
-data:dat[]
+data:dat[],
+theme: string,
+toggleTheme: (newt:string) => void,
+useSystem: () => void,
+isSys: boolean
+}
+
+
+
+export const colors = {
+light:{
+primary:'azure',
+secondary: '#084d99',
+tertiary: '#430854',
+accent:'#141e91',
+tint:'#769104',
+base:'#ebebed'
+
+},
+dark:{
+primary:'#202040',
+secondary: '#0c2138',
+tertiary: '#220929',
+accent:'#090d3d',
+tint:'#475411',
+base:'#0f0f0f'
+}
 }
 
 
@@ -42,15 +70,99 @@ lists: [] as props[],
 listc: [] as props[],
 listt: []  as props[],
 category: [] as item[],
-data :[] as dat[]
+data :[] as dat[],
+theme:'',
+toggleTheme:(n:string) => {},
+useSystem: () => {},
+isSys: false
 })
 
 
 
 export function AuthProvider ({children}:PropsWithChildren) {
 const [isLoggedIn, setIsLoggedIn] = useState(false)
+const [isSys, setIsSys] = useState(false)
+const [theme, setTheme] = useState('dark')
 const [list, setlist] = useState<props[]>()
 const router = useRouter()
+const colorsch = useColorScheme()
+
+
+
+let themeObj = {
+currtheme: '',
+system: false
+}
+
+
+
+type obj ={
+currtheme:string,
+system:boolean
+}
+
+
+const setStorage = async (themeObj:obj) => {
+
+const json =  JSON.stringify(themeObj)
+try {
+await AsyncStorage.setItem('theme', json)
+
+}catch(err) {
+console.log(err)
+}
+}
+
+
+const getStorage = async () => {
+
+try {
+const value = await AsyncStorage.getItem('theme')
+if (value) {
+const data:obj = JSON.parse(value)
+setTheme(data.currtheme)
+setIsSys(data.system)
+}
+
+
+}catch(err) {
+console.log(err)
+}
+}
+
+
+
+
+
+
+
+
+const toggleTheme = (newt:string) => {
+setIsSys(false)
+setTheme(newt)
+const themeObj = {
+currtheme: newt,
+system: false
+}
+setStorage(themeObj)
+}
+
+const useSystem = () => {
+if (colorsch) {
+setIsSys(true)
+setTheme(colorsch)
+const themeObj = {
+currtheme: colorsch,
+system: true
+}
+setStorage(themeObj)
+}
+
+
+
+}
+
+
 
 
 
@@ -199,7 +311,7 @@ const data:dat[] = [
 
 const getData = async () => {
 try {
-const data = await fetch('https://b248-102-91-71-230.ngrok-free.app/data/initdata')
+const data = await fetch('https://4ccb-102-91-103-107.ngrok-free.app/data/initdata')
 const json = await data.json()
 setlist(json)
 } catch (err) {
@@ -224,13 +336,22 @@ setIsLoggedIn(false)
 
 useEffect(() => {
 getData()
+getStorage()
 },[])
 
+
+useEffect(() => {
+if (isSys) {
+useSystem()
+}
+
+
+},[colorsch])
 
 
 
 return (
-<AuthContext.Provider value={{isLoggedIn, LogIn, LogOut, listc, listp, lists, listt, category, data}}>
+<AuthContext.Provider value={{isLoggedIn, LogIn, LogOut, listc, listp, lists, listt, category, data,theme,toggleTheme, useSystem, isSys}}>
 {children}
 </AuthContext.Provider>
 )

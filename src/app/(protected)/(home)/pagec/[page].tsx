@@ -39,6 +39,7 @@ const [Post, setPost] = useState<res[]>([])
 const ref = useRef(null)
 const router = useRouter()
 const {country,category,page,icon} = useLocalSearchParams()
+const theme = authState.theme
 
 let con:string = '';
 let cgory:string = '';
@@ -166,18 +167,18 @@ headerLeft: () => <Pressable onPress={()=> router.back()}>
 animation:'none',
 
 }}/>
-<View style={styles.navbar}>
+<View style={[styles.navbar,{backgroundColor:theme === 'dark' ? '#636262' :'#dedcdc'}]}>
 <CustomNav animatedRef={animatedRef}   router={router}  Ref={ref} icon={econ} selectedC={con}  isC={cgory} isActive={false} data={authState.category}/>
 </View>
 
-<View style={styles.content}>
+<View style={[styles.content, {backgroundColor:theme === 'dark' ? '#1b1c1c' :'#dedcdc'}]}>
 {isLoading ? (<ActivityIndicator animating={true} color='#15389A' size={20} />) : (
 <FlatList data={Post} renderItem={
-({item}) => <Newsitem title={item.title} sourcen={item.sourcen}
+({item}) => <Newsitem title={item.title} theme={authState.theme}
 source_icon={item.source_icon}
-link={item.link} image_url={item.image_url} description={item.description} 
+image_url={item.image_url} description={item.description} 
 pubDate={item.pubDate} article_id={item.article_id}/>
-} keyExtractor={item => item.article_id} ListFooterComponent={()=> <View style={styles.foot}>
+} keyExtractor={item => item.article_id} ListFooterComponent={()=> <View style={[styles.foot,{backgroundColor:theme === 'dark' ? '#383838' :'white'}]}>
 <TouchableOpacity disabled={nextPage === null}
 onPress={() => {
 router.push({
@@ -191,7 +192,7 @@ icon:econ,
 
 })
 }}>
-<Text>Load More...</Text>
+<Text style={{color: theme === 'dark' ?'azure':'#1b1c1c' }}>Load More...</Text>
 
 </TouchableOpacity>
 </View> }/>
@@ -216,21 +217,13 @@ flex: 1,
 justifyContent: "center",
 alignItems: "center",
 },
-countrytag: {
-backgroundColor:'#66676F',
-width:200,
-height:30,
-justifyContent: 'center',
-alignItems:'center',
-flexDirection: 'row',
-columnGap: 10
-},
+
 countryn: {
 color:'azure'
 },
 navbar: {
 flex: 0.8,
-backgroundColor:'#dcdcdc',
+
 width:SCREEN_WIDTH,
 justifyContent: 'center',
 alignItems:'center',
@@ -238,7 +231,7 @@ alignItems:'center',
 
 content: {
 flex: 9.2,
-backgroundColor:'#EDEDED',
+
 width:700,
 maxHeight:2000,
 justifyContent: 'center',
@@ -247,7 +240,6 @@ alignContent:'center'
 
 },
 foot: {
-backgroundColor:'white',
 width:700,
 height:50,
 justifyContent: 'center',

@@ -52,6 +52,7 @@ const [Post, setPost] = useState<res[]>([])
 const ref = useRef(null)
 const router = useRouter()
 const {country,Category,icon} = useLocalSearchParams()
+const {theme} = authState
 
 
 let con:string = '';
@@ -210,18 +211,18 @@ headerLeft: () => <Pressable onPress={()=> router.dismissTo('/')}>
 </Pressable>,
 animation:'none'
 }}/>
-<View style={styles.navbar}>
+<View style={[styles.navbar,{backgroundColor:theme === 'dark' ? '#636262' :'#dedcdc'}]}>
 <CustomNav animatedRef={animatedRef} router={router} Ref={ref} icon={econ} selectedC={con}   isC={cgory} isActive={false}   data={authState.category}/>
 </View>
 
-<View style={styles.content}>
+<View style={[styles.content, {backgroundColor:theme === 'dark' ? '#1b1c1c' :'#dedcdc'}]}>
 {isLoading ? (<ActivityIndicator animating={true} color='#15389A' size={30}/>) : (
 <FlatList data={Post} renderItem={
-({item}) => <Newsitem title={item.title} sourcen={item.sourcen}
+({item}) => <Newsitem title={item.title} theme={theme}
 source_icon={item.source_icon}
-link={item.link} image_url={item.image_url} description={item.description} 
+ image_url={item.image_url} description={item.description} 
 pubDate={item.pubDate} article_id={item.article_id}/>
-} keyExtractor={item => item.article_id} ListFooterComponent={()=>  (result === 0 ? <Component /> : <View style={styles.foot}>
+} keyExtractor={item => item.article_id} ListFooterComponent={()=>  (result === 0 ? <Component /> :<View style={[styles.foot,{backgroundColor:theme === 'dark' ? '#1b1c1c' :'white'}]}>
 <TouchableOpacity disabled={nextPage === null}
 onPress={() => {
 router.push({
@@ -236,7 +237,7 @@ slidenum:scroll.value
 
 })
 }}>
-<Text>Load More...</Text>
+<Text style={{color: theme === 'dark' ?'azure':'#1b1c1c' }}>Load More...</Text>
 
 </TouchableOpacity>
 </View> )}/>
@@ -299,7 +300,6 @@ alignContent:'center'
 
 },
 foot: {
-backgroundColor:'white',
 width:700,
 height:50,
 justifyContent: 'center',

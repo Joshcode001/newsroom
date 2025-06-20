@@ -33,14 +33,16 @@ total: string
 type boxt = {
 data: props[],
 title: string,
-router: Router
+router: Router,
+theme: string
 }
 
 type sbar = {
 setsearch : React.Dispatch<React.SetStateAction<string>>,
 search: string,
 getSdata: (prop: string) => Promise<void>,
-setisLoading: React.Dispatch<React.SetStateAction<boolean>>
+setisLoading: React.Dispatch<React.SetStateAction<boolean>>,
+theme: string
 
 }
 
@@ -60,13 +62,13 @@ article_id: string
 
 
 
-export const SearchBar = ({setsearch, search, getSdata, setisLoading}: sbar) => (
+export const SearchBar = ({setsearch, search, getSdata, setisLoading, theme}: sbar) => (
 <View style={styles.searchbox}>
-<TextInput style={styles.input} placeholder="write here"  value={search} onChangeText={text => setsearch(text)} 
+<TextInput style={[styles.input,{backgroundColor:theme ==='dark' ? '#363636': '#B0ADAD'}]} placeholder="write here"  value={search} onChangeText={text => setsearch(text)} 
 onFocus={() =>{ setsearch('')
 setisLoading(true)
 }} />
-<TouchableOpacity style={styles.buttonbox} disabled={search === ''}
+<TouchableOpacity style={[styles.buttonbox,{backgroundColor:theme === 'dark'?'#0b4a2f':'#7fd1ae'}]} disabled={search === ''}
 onPress={() => {
 getSdata(search)
 Keyboard.dismiss()
@@ -109,8 +111,8 @@ image: image
 
 
 
-export const Stab = ({data, title, router}:boxt) => (
-<View style={styles.stab}>
+export const Stab = ({data, title, router, theme}:boxt) => (
+<View style={[styles.stab, {backgroundColor: theme === 'dark' ?'#402306': '#8a4e12' }]}>
 <Text style={styles.stabtext}>{title}</Text>
 <View style={styles.scard}>
 <FlatList data={data} renderItem={({item}) => <Sbox image={item.image} total={item.total} router={router} name={item.fname} cate={item.category} />} keyExtractor={item => item._id} horizontal={true} showsHorizontalScrollIndicator={false}/>
@@ -136,6 +138,7 @@ const [nextPage, setnextPage] = useState('')
 const [search, setsearch] = useState('')
 const Ref = useRef<any>(null)
 const title = `Today's Global Searches`
+const theme = authState.theme
 
 
 
@@ -168,23 +171,23 @@ console.log(err)
 return (
 <GestureHandlerRootView style={{flex: 1}}>
 <View style={styles.container}>
-<View style={styles.head}>
-<SearchBar search={search} setsearch={setsearch} getSdata={getSdata} setisLoading={setisLoading} />
+<View style={[styles.head, {backgroundColor:theme === 'dark' ? '#021526':'#20394f' }]}>
+<SearchBar search={search} setsearch={setsearch} getSdata={getSdata} setisLoading={setisLoading} theme={theme} />
 </View>
 
-<View style={styles.content}>
+<View style={[styles.content, {backgroundColor:theme === 'dark' ? '#1b1c1c' :'#dedcdc'}]}>
 
 {
-(isDom) ? (<Text>Joshua's Search Engine</Text>) :
+(isDom) ? (<Text style={{color:theme === 'dark' ? 'azure' : 'grey'}}>Joshua's Search Engine</Text>) :
 (isLoading) ? (<ActivityIndicator />) : 
 (result.length === 0) ? (<Text>{search} is not Trending at this Hour, Check Later</Text>) :
 (<FlatList data={result}  renderItem={({item}) => (
-<Newsitem title={item.title} sourcen={item.sourcen}
+<Newsitem title={item.title} theme={theme}
 source_icon={item.source_icon}
-link={item.link} image_url={item.image_url} description={item.description} 
+image_url={item.image_url} description={item.description} 
 pubDate={item.pubDate} article_id={item.article_id}/>)} keyExtractor={item => item.article_id}
 ListFooterComponent={()=> (
-<View style={styles.foot}>
+<View style={[styles.foot,{backgroundColor:theme === 'dark' ? '#383838' :'white'}]}>
 <TouchableOpacity disabled={nextPage === null} onPress={()=> {
 router.push({
 pathname: '/(protected)/(search)/[paged]',
@@ -195,7 +198,7 @@ paged:nextPage
 }
 })
 }}>
-<Text>Load More...</Text>
+<Text style={{color: theme === 'dark' ?'azure':'#1b1c1c' }}>Load More...</Text>
 </TouchableOpacity>
 </View>)}
 />)
@@ -210,12 +213,12 @@ paged:nextPage
 </View>
 </View>
 <CustomBsheet  Ref={Ref} title={title} >
-<View style={styles.child}>
+<View style={[styles.child, {backgroundColor:theme === 'dark' ?'#5e5e5e':'#EAE8E8'}]}>
 <ScrollView contentContainerStyle={{flexDirection: 'column', width:'100%', height:2000}} showsVerticalScrollIndicator={false}>
-<Stab data={authState.listp} router={router} title='Popular People!' />
-<Stab data={authState.lists} router={router} title='Popular Sources!' />
-<Stab data={authState.listc} router={router} title='Popular CryptoCoins!' />
-<Stab data={authState.listt} router={router} title='Popular Teams!' />
+<Stab  theme={theme} data={authState.listp} router={router} title='Popular People!' />
+<Stab theme={theme} data={authState.lists} router={router} title='Popular Sources!' />
+<Stab theme={theme} data={authState.listc} router={router} title='Popular CryptoCoins!' />
+<Stab theme={theme} data={authState.listt} router={router} title='Popular Teams!' />
 </ScrollView>
 </View>
 </CustomBsheet>
@@ -258,12 +261,10 @@ head: {
 flex:1.7,
 justifyContent: "center",
 alignItems: "center",
-backgroundColor:'#222831',
 width:'100%'
 },
 
 content: {
-backgroundColor:'#EDEDED',
 flex:8.3,
 justifyContent: "center",
 alignItems: "center",
@@ -285,7 +286,6 @@ paddingBottom:20
 input: {
 justifyContent: "center",
 alignItems: "center",
-backgroundColor:'#B0ADAD',
 width:310,
 height:50,
 borderRadius:50,
@@ -304,7 +304,6 @@ alignItems: "center",
 buttonbox: {
 justifyContent: "center",
 alignItems: "center",
-backgroundColor:'#7fd1ae',
 padding:10,
 marginBottom:2
 },
@@ -312,7 +311,6 @@ marginBottom:2
 child: {
 height:900,
 width:'100%',
-backgroundColor:'#E7E7E7',
 justifyContent:'center',
 alignItems:'center',
 marginTop:30
@@ -343,7 +341,6 @@ alignItems:'center',
 flexDirection:'column',
 rowGap:20,
 marginTop:10,
-backgroundColor:'#5e5e5e',
 borderRadius:25,
 marginBottom:20,
 shadowColor: '#000',
@@ -377,7 +374,6 @@ color:'azure',
 
 
 foot: {
-backgroundColor:'white',
 width:700,
 height:50,
 justifyContent: 'center',

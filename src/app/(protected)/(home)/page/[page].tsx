@@ -5,6 +5,7 @@ import { Notifybar,Countrybar, CountryTag, Searchbar, Newsitem} from '..'
 import { AuthContext } from "@/src/utils/authContext";
 import { useAnimatedRef } from 'react-native-reanimated'
 import CustomNav from "@/src/component/CustomNav";
+import { colors } from "@/src/utils/authContext";
 
 
 
@@ -27,7 +28,7 @@ article_id: string
 
 
 const fifth = () => {
-
+const Acolor = colors
 const animatedRef = useAnimatedRef<FlatList>()
 const authState = useContext(AuthContext)
 const [isLoading, setisLoading] = useState(false)
@@ -76,6 +77,7 @@ setIsModal('a')
 
 
 const data = authState.data
+const theme = authState.theme
 
 const newData = data.filter((item) => ((item.name).toLowerCase().includes(Search.toLowerCase())))
 
@@ -118,19 +120,19 @@ headerRight: ()=> <Notifybar  onPressb={notifymod}/>,
 headerLeft: () => <Countrybar onPressc={cpick} cicon={selectedC.icon} cname={selectedC.name}/>,
 animation:'none',
 }}/>
-<View style={styles.navbar}>
+<View style={[styles.navbar,{backgroundColor:theme === 'dark' ? '#636262' :'#dedcdc'}]}>
 <CustomNav animatedRef={animatedRef} router={router} isActive={isActive}   data={authState.category}
 selectedC={selectedC.name} Ref={Ref} icon={selectedC.icon}/>
 </View>
-<View style={styles.content}>
+<View style={[styles.content, {backgroundColor:theme === 'dark' ? '#1b1c1c': '#dedcdc'}]}>
 {isLoading ? (<ActivityIndicator animating={true} color='#15389A' size={60}/>) : (
 <FlatList data={Post} renderItem={
-({item}) => <Newsitem title={item.title} sourcen={item.sourcen}
+({item}) => <Newsitem title={item.title}  theme={theme}
 source_icon={item.source_icon}
-link={item.link} image_url={item.image_url} description={item.description} 
+ image_url={item.image_url} description={item.description} 
 pubDate={item.pubDate} article_id={item.article_id}/>
 } keyExtractor={item => item.article_id}
-ListFooterComponent={()=> <View style={styles.foot}>
+ListFooterComponent={()=> <View style={[styles.foot,{backgroundColor:theme === 'dark' ? '#383838' :'white'}]}>
 <TouchableOpacity  disabled={nextPage === null}
 onPress={() => {
 router.push({
@@ -143,8 +145,7 @@ page:nextPage
 
 })
 }}>
-<Text>Load More...</Text>
-
+<Text style={{color: theme === 'dark' ?'azure':'#1b1c1c' }}>Load More...</Text>
 </TouchableOpacity>
 </View> }/>
 )}
@@ -155,11 +156,11 @@ page:nextPage
 
 <Modal visible={IsModal === 'b'} animationType="slide"
 onRequestClose={()=> {setIsModal('a')}} presentationStyle="pageSheet">
-<View style={styles.centeredView}>
-<Searchbar  search={Search} setSearch={setSearch}/>
-<View style={[styles.modalView, styles.color]}>
+<View style={[styles.centeredView,{backgroundColor:theme === 'dark' ? '#2e2e2d' :'#cccccc'}]}>
+<Searchbar  search={Search} setSearch={setSearch} theme={theme}/>
+<View style={[styles.modalView, {backgroundColor:theme === 'dark' ? Acolor.dark.tertiary :  Acolor.light.tertiary}]}>
 <FlatList  data={newData} renderItem={({item}) => 
-<CountryTag cname={item.name} icon={item.icon} onPressc={
+<CountryTag theme={theme} cname={item.name} icon={item.icon} onPressc={
 () => {
 setSelectedC({
 name: item.name,
@@ -176,8 +177,8 @@ setisActive(false)
 
 <Modal visible={IsModal === 'c'} animationType="slide"
 onRequestClose={()=> {setIsModal('a')}} presentationStyle="pageSheet">
-<View style={styles.centeredView}>
-<View style={styles.modalView}>
+<View style={[styles.centeredView,{backgroundColor:theme === 'dark' ? '#2e2e2d' :'#cccccc'}]}>
+<View style={[styles.modalView, {backgroundColor:theme === 'dark' ? Acolor.dark.tertiary :  Acolor.light.tertiary}]}>
 <Text>Hi there!</Text>
 </View>
 </View>
@@ -202,36 +203,19 @@ container: {
 flex: 1,
 justifyContent: "center",
 alignItems: "center",
-
 },
 
-countrybar: {
-backgroundColor:'#66676F',
-width:200,
-height:30,
-justifyContent: 'center',
-alignItems:'center',
-flexDirection: 'row',
-columnGap: 10
-
-},
-
-text: {
-color:'azure'
-},
 
 centeredView: {
 flex: 1,
 justifyContent: 'center',
 alignItems: 'center',
-
-
 },
+
 
 modalView: {
 width:380,
 height:700,
-backgroundColor: 'white',
 borderRadius: 30,
 alignItems: 'center',
 shadowColor: '#000',
@@ -244,13 +228,6 @@ shadowRadius: 4,
 elevation: 5,
 },
 
-notify: {
-backgroundColor:'#66676F',
-width:100,
-height:30,
-justifyContent: 'center',
-alignItems:'center',
-}, 
 
 ctag: {
 width: 350,
@@ -264,16 +241,11 @@ alignItems:'center',
 },
 cntag: {
 fontSize:16,
-color:'#D2E2D7'
 },
 
 
-color: {
-backgroundColor: '#425347'
-},
 
 sbox: {
-backgroundColor:'#142F22',
 marginBottom: 40,
 width: 300,
 height: 50,
@@ -283,7 +255,6 @@ alignItems: 'center'
 },
 
 input: {
-backgroundColor:'#142F22',
 width:200,
 height: 50,
 color:'azure',
@@ -292,7 +263,6 @@ fontSize:20
 
 navbar: {
 flex: 0.8,
-backgroundColor:'#dcdcdc',
 width:500,
 justifyContent: 'center',
 alignItems:'center',
@@ -303,7 +273,6 @@ paddingTop:10,
 
 content: {
 flex: 9.2,
-backgroundColor:'#EDEDED',
 width:700,
 maxHeight:2000,
 justifyContent: 'center',
@@ -312,7 +281,6 @@ alignContent:'center'
 
 },
 foot: {
-backgroundColor:'white',
 width:700,
 height:50,
 justifyContent: 'center',
@@ -320,24 +288,6 @@ alignItems:'center',
 
 },
 
-nav: {
-
-width:100,
-justifyContent:'center',
-alignItems: 'center',
-marginRight:40,
-marginLeft: 40,
-borderRadius: 50,
-height:50,
-shadowColor: '#000',
-shadowOffset: {
-width: 8,
-height: 6,
-},
-shadowOpacity: 0.50,
-shadowRadius: 4,
-elevation: 10,
-},
 
 image: {
 width: 700,
@@ -349,17 +299,7 @@ width: 60,
 height: 60,
 },
 
-title: {
-justifyContent:'center',
-alignItems:'center',
-backgroundColor:'#D4D4D4',
-textAlign:'center',
-fontSize: 30,
-width:450,
-fontWeight:'900',
-color:'#1C2910',
-padding:30
-},
+
 
 linkbox: {
 justifyContent:'space-evenly',
@@ -377,11 +317,9 @@ alignItems: 'center',
 width:700,
 backgroundColor:'grey'
 },
-tbox:{
-width:700,
-justifyContent:'center',
-alignItems:'center'
-},
+
+
+
 desc: {
 width:400,
 padding:40,
@@ -397,7 +335,7 @@ linkcon: {
 width: 700,
 justifyContent:'center',
 alignItems:'center'
-}
+},
 
 
 

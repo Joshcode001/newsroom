@@ -1,6 +1,6 @@
 import { Text,StyleSheet,TouchableOpacity,FlatList, ViewToken} from "react-native";
-import Animated, { AnimatedRef, useAnimatedStyle, useSharedValue, SharedValue, withTiming} from 'react-native-reanimated'
-import React, {} from 'react'
+import Animated, { useAnimatedStyle, SharedValue, withTiming} from 'react-native-reanimated'
+import React from 'react'
 
 
 
